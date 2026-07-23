@@ -1,0 +1,47 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Exam</h2>
+    </x-slot>
+
+    <div class="py-6 max-w-lg mx-auto sm:px-6 lg:px-8">
+        <form action="{{ route('faculty.exams.update', $exam) }}" method="POST" class="bg-white p-6 shadow rounded space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <label class="block mb-1">Course (read-only)</label>
+                <input type="text" value="{{ $exam->course->title }}" class="w-full border rounded p-2 bg-gray-100" disabled>
+            </div>
+
+            <div>
+                <label class="block mb-1">Exam Title</label>
+                <input type="text" name="title" value="{{ old('title', $exam->title) }}" class="w-full border rounded p-2">
+                @error('title') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block mb-1">Type</label>
+                <select name="type" class="w-full border rounded p-2">
+                    @foreach(['quiz','midterm','final','assignment'] as $type)
+                        <option value="{{ $type }}" @selected(old('type', $exam->type) === $type)>{{ ucfirst($type) }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block mb-1">Exam Date</label>
+                <input type="date" name="exam_date" value="{{ old('exam_date', $exam->exam_date->format('Y-m-d')) }}" class="w-full border rounded p-2">
+                @error('exam_date') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block mb-1">Total Marks</label>
+                <input type="number" name="total_marks" value="{{ old('total_marks', $exam->total_marks) }}" class="w-full border rounded p-2">
+                @error('total_marks') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            </div>
+
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded">Update</button>
+            <a href="{{ route('faculty.exams.index') }}" class="ml-2 text-gray-600">Cancel</a>
+        </form>
+    </div>
+</x-app-layout>
