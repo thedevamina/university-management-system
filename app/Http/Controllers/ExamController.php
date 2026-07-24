@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Exam;
 use App\Models\Course;
+use App\Services\ExamService;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
+    public function __construct(protected ExamService $examService)
+    {
+    }
+
     public function index()
     {
         $faculty = auth()->user()->facultyProfile;
-
-        $exams = Exam::whereHas('course', function ($q) use ($faculty) {
-            $q->where('faculty_id', $faculty->id);
-        })->with('course')->latest()->paginate(10);
+        $exams = $this->examService->listForFaculty($faculty->id);
 
         return view('faculty.exams.index', compact('exams'));
     }
@@ -37,12 +38,12 @@ class ExamController extends Controller
             'total_marks' => 'required|integer|min:1|max:1000',
         ]);
 
-        Exam::create($request->only('course_id','title','type','exam_date','total_marks'));
+        $this->examService->createExam($request->only('course_id','title','type','exam_date','total_marks'));
 
         return redirect()->route('faculty.exams.index')->with('success', 'Exam created successfully.');
     }
 
-    public function edit(Exam $exam)
+    public function edit(\App\Models\Exam $exam)
     {
         $faculty = auth()->user()->facultyProfile;
         $courses = Course::where('faculty_id', $faculty->id)->get();
@@ -50,7 +51,7 @@ class ExamController extends Controller
         return view('faculty.exams.edit', compact('exam', 'courses'));
     }
 
-    public function update(Request $request, Exam $exam)
+    public function update(Request $request, \App\Models\Exam $exam)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -59,14 +60,14 @@ class ExamController extends Controller
             'total_marks' => 'required|integer|min:1|max:1000',
         ]);
 
-        $exam->update($request->only('title','type','exam_date','total_marks'));
+        $this->examService->updateExam($exam, $request->only('title','type','exam_date','total_marks'));
 
         return redirect()->route('faculty.exams.index')->with('success', 'Exam updated.');
     }
 
-    public function destroy(Exam $exam)
+    public function destroy(\App\Models\Exam $exam)
     {
-        $exam->delete();
+        $this->examService->deleteExam($exam);
         return redirect()->route('faculty.exams.index')->with('success', 'Exam removed.');
     }
 }

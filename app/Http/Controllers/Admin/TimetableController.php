@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Timetable;
 use App\Models\Course;
 use App\Models\FacultyProfile;
+use App\Models\Timetable;
 use App\Rules\NoTimetableClash;
+use App\Services\TimetableService;
 use Illuminate\Http\Request;
 
 class TimetableController extends Controller
 {
+    public function __construct(protected TimetableService $timetableService)
+    {
+    }
+
     public function index()
     {
-        $timetables = Timetable::with('course', 'faculty.user')->orderBy('day')->orderBy('start_time')->paginate(15);
+        $timetables = $this->timetableService->listTimetables();
         return view('admin.timetables.index', compact('timetables'));
     }
 
@@ -37,7 +42,7 @@ class TimetableController extends Controller
             )],
         ]);
 
-        Timetable::create($validated);
+        $this->timetableService->createEntry($validated);
 
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry created.');
     }
@@ -62,14 +67,14 @@ class TimetableController extends Controller
             )],
         ]);
 
-        $timetable->update($validated);
+        $this->timetableService->updateEntry($timetable, $validated);
 
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable updated.');
     }
 
     public function destroy(Timetable $timetable)
     {
-        $timetable->delete();
+        $this->timetableService->deleteEntry($timetable);
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry removed.');
     }
 }

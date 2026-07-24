@@ -2,42 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use App\Models\Attendance;
+use App\Services\AttendanceService;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    // Faculty selects a course + date to mark attendance
+    public function __construct(protected AttendanceService $attendanceService)
+    {
+    }
+
     public function create(Request $request)
     {
         $faculty = auth()->user()->facultyProfile;
-
-        $courses = Course::where('faculty_id', $faculty->id)->get();
+        $courses = $this->attendanceService->coursesForFaculty($faculty->id);
 
         $selectedCourseId = $request->query('course_id');
         $date = $request->query('date', now()->format('Y-m-d'));
 
-        $students = collect();
-        $existingAttendance = collect();
-
-        if ($selectedCourseId) {
-            $course = Course::findOrFail($selectedCourseId);
-
-            // Only students enrolled in this course
-            $students = $course->students()->with('user')->get();
-
-            // Existing attendance for this course+date, keyed by student_id
-            $existingAttendance = Attendance::where('course_id', $selectedCourseId)
-                ->where('date', $date)
-                ->get()
-                ->keyBy('student_id');
-        }
+        [$students, $existingAttendance] = $this->attendanceService->loadRoster(
+            $selectedCourseId ? (int) $selectedCourseId : null,
+            $date
+        );
 
         return view('faculty.attendance.create', compact('courses', 'selectedCourseId', 'date', 'students', 'existingAttendance'));
     }
 
-    // Save attendance for all students at once
     public function store(Request $request)
     {
         $request->validate([
@@ -47,16 +36,7 @@ class AttendanceController extends Controller
             'attendance.*' => 'required|in:present,absent,leave',
         ]);
 
-        foreach ($request->attendance as $studentId => $status) {
-            Attendance::updateOrCreate(
-                [
-                    'student_id' => $studentId,
-                    'course_id' => $request->course_id,
-                    'date' => $request->date,
-                ],
-                ['status' => $status]
-            );
-        }
+        $this->attendanceService->saveAttendance((int) $request->course_id, $request->date, $request->attendance);
 
         return redirect()
             ->route('faculty.attendance.create', ['course_id' => $request->course_id, 'date' => $request->date])

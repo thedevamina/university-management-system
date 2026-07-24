@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Fee;
 use App\Models\StudentProfile;
+use App\Services\FeeService;
 use Illuminate\Http\Request;
 
 class FeeController extends Controller
 {
+    public function __construct(protected FeeService $feeService)
+    {
+    }
+
     public function index()
     {
-        $fees = Fee::with('student.user')->latest()->paginate(15);
+        $fees = $this->feeService->listFees();
         return view('admin.fees.index', compact('fees'));
     }
 
@@ -30,33 +35,28 @@ class FeeController extends Controller
             'due_date' => 'required|date',
         ]);
 
-        Fee::create($validated);
+        $this->feeService->createFee($validated);
 
         return redirect()->route('admin.fees.index')->with('success', 'Fee record created.');
     }
 
     public function markPaid(Fee $fee)
     {
-        $fee->update([
-            'status' => 'paid',
-            'paid_at' => now(),
-        ]);
-
+        $this->feeService->markPaid($fee);
         return back()->with('success', 'Fee marked as paid.');
     }
 
     public function destroy(Fee $fee)
     {
-        $fee->delete();
+        $this->feeService->deleteFee($fee);
         return back()->with('success', 'Fee record removed.');
     }
 
     public function myFees()
-{
-    $student = auth()->user()->studentProfile;
+    {
+        $student = auth()->user()->studentProfile;
+        $fees = $this->feeService->myFees($student->id);
 
-    $fees = Fee::where('student_id', $student->id)->latest()->get();
-
-    return view('student.fees.index', compact('fees'));
-}
+        return view('student.fees.index', compact('fees'));
+    }
 }
