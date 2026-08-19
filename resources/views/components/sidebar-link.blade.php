@@ -18,9 +18,9 @@ $icons = [
 
 <a href="{{ $href }}"
    @class([
-        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition',
-        'bg-indigo-600 text-white' => $active,
-        'text-slate-300 hover:bg-slate-800 hover:text-white' => ! $active,
+        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition',
+        'bg-indigo-600 text-white shadow-sm' => $active,
+        'text-slate-400 hover:bg-white/5 hover:text-white' => ! $active,
    ])>
     @if($icon && isset($icons[$icon]))
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

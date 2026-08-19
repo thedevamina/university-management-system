@@ -12,4 +12,13 @@ class Fee extends Model
     {
         return $this->belongsTo(StudentProfile::class, 'student_id');
     }
+
+    public function payments()
+{
+    return $this->hasMany(Payment::class);
+}
+public function subscription()
+{
+    return $this->hasOne(Subscription::class);
+}
 }

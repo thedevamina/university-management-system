@@ -26,4 +26,13 @@ public function courses()
 {
     return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id');
 }
+public function subscription()
+{
+    return $this->hasOne(Subscription::class, 'student_id');
+}
+
+public function documents()
+{
+    return $this->morphMany(Document::class, 'documentable');
+}
 }

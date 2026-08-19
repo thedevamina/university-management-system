@@ -35,12 +35,15 @@
                         <td class="p-3">{{ $member->designation }}</td>
                         <td class="p-3">{{ $member->employee_no }}</td>
                         <td class="p-3 space-x-2">
-                            <a href="{{ route('admin.faculty.edit', $member) }}" class="text-blue-600">Edit</a>
-                            <form action="{{ route('admin.faculty.destroy', $member) }}" method="POST" class="inline" onsubmit="return confirm('Remove this faculty member?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600">Delete</button>
-                            </form>
+                           
+    <a href="{{ route('admin.faculty.edit', $member) }}" class="text-blue-600">Edit</a>
+    <a href="{{ route('admin.faculty.documents.index', $member) }}" class="text-purple-600">Documents</a>
+    <form action="{{ route('admin.faculty.destroy', $member) }}" method="POST" class="inline" onsubmit="return confirm('Remove this faculty member?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="text-red-600">Delete</button>
+    </form>
+</td>
                         </td>
                     </tr>
                 @empty

@@ -17,4 +17,10 @@ class FacultyProfile extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+  
+public function documents()
+{
+    return $this->morphMany(Document::class, 'documentable');
+}
 }

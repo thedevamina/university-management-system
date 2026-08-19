@@ -35,13 +35,14 @@
                         <td class="p-3">{{ $student->department->name }}</td>
                         <td class="p-3">{{ $student->batch }}</td>
                         <td class="p-3 space-x-2">
-                            <a href="{{ route('admin.students.edit', $student) }}" class="text-blue-600">Edit</a>
-                            <form action="{{ route('admin.students.destroy', $student) }}" method="POST" class="inline" onsubmit="return confirm('Remove this student?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600">Delete</button>
-                            </form>
-                        </td>
+    <a href="{{ route('admin.students.edit', $student) }}" class="text-blue-600">Edit</a>
+    <a href="{{ route('admin.students.documents.index', $student) }}" class="text-purple-600">Documents</a>
+    <form action="{{ route('admin.students.destroy', $student) }}" method="POST" class="inline" onsubmit="return confirm('Remove this student?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="text-red-600">Delete</button>
+    </form>
+</td>
                     </tr>
                 @empty
                     <tr><td class="p-3" colspan="6">No students yet.</td></tr>

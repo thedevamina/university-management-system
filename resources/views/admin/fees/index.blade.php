@@ -48,8 +48,10 @@
                                     <button type="submit" class="text-green-600">Mark Paid</button>
                                 </form>
                             @endif
+                            <a href="{{ route('admin.fees.webhook-events', $fee) }}" class="text-blue-600 text-sm mr-2">Logs</a>
                             <form action="{{ route('admin.fees.destroy', $fee) }}" method="POST" class="inline" onsubmit="return confirm('Delete this fee record?')">
                                 @csrf @method('DELETE')
+                                
                                 <button type="submit" class="text-red-600">Delete</button>
                             </form>
                         </td>
