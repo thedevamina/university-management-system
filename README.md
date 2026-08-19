@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:1e3a8a&height=180&section=header&text=University%20Management%20System&fontSize=36&fontColor=93c5fd&fontAlignY=40&desc=A%20full-featured%20Laravel%20platform%20for%20Admins,%20Faculty%20%26%20Students&descAlignY=60&descSize=16&descColor=cbd5e1" width="100%"/>
+
+<p>
+  <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white" />
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white" />
 </p>
 
-## About Laravel
+<i>Role-based campus management — Departments, Courses, Attendance, Exams, Fees & Subscriptions — built on a clean Repository–Service architecture.</i>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+</div>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🧭 Overview
 
-## Learning Laravel
+**UniSys** is a complete university management platform built in Laravel, supporting three roles — **Admin**, **Faculty**, and **Student** — each with their own dashboard and permissions. It goes beyond basic CRUD, layering in a proper **Repository → Service → Controller** architecture, **Stripe payments & recurring subscriptions**, and a full **webhook audit trail** for financial events.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🏗️ What I Built
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+| Module | Description |
+|---|---|
+| 🔐 **Auth & Roles** | Session-based login (Breeze) + custom role middleware for Admin / Faculty / Student |
+| 🏛️ **Departments, Faculty & Students** | Full CRUD with auto-generated roll numbers and employee IDs |
+| 📚 **Courses & Enrollments** | Many-to-many enrollment system, department-scoped course browsing |
+| ✅ **Attendance** | Faculty mark attendance per course, per date, with roster view |
+| 📝 **Exams & Results** | Marks entry with an **Eloquent Observer** that auto-calculates grades |
+| 🗓️ **Timetable** | Conflict-free scheduling via a **custom validation rule** |
+| 💳 **Payments (Stripe)** | One-time fee payments via Stripe Checkout, with Payment Intent tracking |
+| 🔁 **Subscriptions** | Recurring monthly fee billing tied to a specific Fee record |
+| 📡 **Webhook Audit Log** | Every Stripe event (success, failure, expiry) is logged and viewable by Admin |
+| 🌐 **REST API** | Token-based API (Sanctum) for external/mobile access |
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🧱 Architecture
 
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+Controller → Service (business logic) → Repository (queries) → Model → Database
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Every module — from Departments to Payments — follows this layered pattern via **constructor-injected dependencies**, keeping controllers thin and logic testable/reusable.
 
-## Contributing
+```
+app/
+├── Http/Controllers/       → Request handling only
+├── Services/                → Business rules (grade calc, roll-no generation, Stripe logic)
+├── Repositories/            → All Eloquent queries
+├── Models/                  → Relationships & casts
+├── Observers/                → Auto grade calculation
+└── Rules/                    → Custom validation (timetable clash checks)
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🛠️ Tech Stack
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Backend:** Laravel 13 · PHP 8.3 · MySQL
+**Frontend:** Blade · Tailwind CSS
+**Payments:** Stripe Checkout + Webhooks (Sandbox)
+**Auth:** Laravel Breeze (session) + Sanctum (API tokens)
+**Tooling:** Vite · Composer · Git
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## ✨ Highlights
 
-## License
+- 🔁 Recurring subscriptions with full lifecycle tracking (`active`, `past_due`, `canceled`)
+- 📡 Idempotent webhook processing — duplicate Stripe events are safely ignored
+- 🧮 Auto-graded results via a Laravel **Observer**
+- 🛡️ Role-scoped access control on every route
+- 🧩 Reusable Blade components (sidebar, tables, status badges)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+<div align="center">
+<sub>Built as a hands-on Laravel deep-dive — from authentication to production-style payment infrastructure.</sub>
+</div>
